@@ -21,7 +21,7 @@ public class KeyPathTransformer: NSObject {
     
     public func set(value: AnyObject?, forKeyPath keyPath: String) {
         if let value = value {
-            dictToTransform.set(value, keyPath: keyPath)
+            dictTransformed.set(value, keyPath: keyPath)
         }
     }
     
