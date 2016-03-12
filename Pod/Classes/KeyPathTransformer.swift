@@ -19,6 +19,12 @@ public class KeyPathTransformer: NSObject {
         dictToTransform = dict
     }
     
+    public func set(value: AnyObject?, forKeyPath keyPath: String) {
+        if let value = value {
+            dictToTransform.set(value, keyPath: keyPath)
+        }
+    }
+    
     public func applyRule(source: String, _ dest: String) {
         if let val = dictToTransform.get(source) {
             dictTransformed.set(val, keyPath: dest)
