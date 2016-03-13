@@ -9,7 +9,7 @@
 import UIKit
 import Dollar
 
-extension Dictionary where Key: StringLiteralConvertible, Value: AnyObject {
+public extension Dictionary where Key: StringLiteralConvertible, Value: AnyObject {
     func get(keyPath: String) -> AnyObject? {
         if let dict = (self as? AnyObject) as? Dictionary<String, AnyObject> {
             return (dict as NSDictionary).valueForKeyPath(keyPath)

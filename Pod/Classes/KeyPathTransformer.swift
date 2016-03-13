@@ -9,8 +9,19 @@
 import UIKit
 import Dollar
 
+// define new operator
+infix operator => { associativity left precedence 140 } // 1
+public func =><T>(left: T, right: T) -> (T, T) {
+    return (left, right)
+}
+public func =>(left: AnyObject?, right: String) -> (AnyObject?, String) {
+    return (left, right)
+}
+
+// define the KeyPath Transform class
 public class KeyPathTransformer: NSObject {
     
+    // references to two dictionaries
     private var dictToTransform: Dictionary<String, AnyObject> = [:]
     private var dictTransformed: Dictionary<String, AnyObject> = [:]
     
@@ -19,21 +30,28 @@ public class KeyPathTransformer: NSObject {
         dictToTransform = dict
     }
     
-    public func set(value: AnyObject?, forKeyPath keyPath: String) {
+    public func add(set: (AnyObject?, String)) {
+        let value = set.0
+        let keyPath = set.1
+        
         if let value = value {
             dictTransformed.set(value, keyPath: keyPath)
         }
     }
     
-    public func applyRule(source: String, _ dest: String) {
+    public func apply(rule: (String, String)) {
+        let source = rule.0
+        let destination = rule.1
+        
         if let val = dictToTransform.get(source) {
-            dictTransformed.set(val, keyPath: dest)
+            dictTransformed.set(val, keyPath: destination)
         }
     }
     
-    public func applyRuleArray(source: String, _ dest: String, callback: (Dictionary<String, AnyObject>) -> (Dictionary<String, AnyObject>)) {
+    public func applyArray(rule: (String, String), callback: (Dictionary<String, AnyObject>) -> (Dictionary<String, AnyObject>)) {
+        let source = rule.0
+        let destination = rule.1
         var result: [Dictionary<String, AnyObject>] = []
-        
         
         if let array = dictToTransform.get(source) as? Array<AnyObject> {
             let flattened = $.flatten(array)
@@ -44,7 +62,7 @@ public class KeyPathTransformer: NSObject {
             }
         }
         
-        dictTransformed.set(result, keyPath: dest)
+        dictTransformed.set(result, keyPath: destination)
     }
     
     public func transform () -> Dictionary<String, AnyObject> {
