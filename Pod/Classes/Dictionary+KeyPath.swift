@@ -37,4 +37,25 @@ extension Dictionary where Key: StringLiteralConvertible, Value: AnyObject {
             }
         }
     }
+    
+    
+    mutating func setInArray(val: AnyObject, inArray keyPathForArray: String, atKeyPath keyPathInsideArray: String) {
+        var initial = self.get(keyPathForArray) as! [Dictionary]
+        let values = val as! [AnyObject]
+        
+        if initial.count == 0 {
+            $.each(values) { (i, object) in
+                var dict: Dictionary = [:]
+                dict.set(object, keyPath: keyPathInsideArray)
+                initial.append(dict)
+            }
+        }
+        else {
+            $.each(initial) { (i, _) in
+                initial[i].set(val[i], keyPath: keyPathInsideArray)
+            }
+        }
+        
+        self.set(initial as! AnyObject, keyPath: keyPathForArray)
+    }
 }

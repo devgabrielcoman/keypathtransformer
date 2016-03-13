@@ -33,12 +33,17 @@ public class KeyPathTransformer: NSObject {
     
     public func applyRuleArray(source: String, _ dest: String, callback: (Dictionary<String, AnyObject>) -> (Dictionary<String, AnyObject>)) {
         var result: [Dictionary<String, AnyObject>] = []
-        if let array = dictToTransform.get(source) as? [Dictionary<String, AnyObject>] {
-            
-            $.each(array) { (i, _) in
-                result.append(callback(array[i]))
+        
+        
+        if let array = dictToTransform.get(source) as? Array<AnyObject> {
+            let flattened = $.flatten(array)
+            if let flattened = flattened as? [Dictionary<String, AnyObject>] {
+                $.each(flattened) { (i, _) in
+                    result.append(callback(flattened[i]))
+                }
             }
         }
+        
         dictTransformed.set(result, keyPath: dest)
     }
     
