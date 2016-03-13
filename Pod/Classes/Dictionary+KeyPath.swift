@@ -17,7 +17,7 @@
 import UIKit
 import Dollar
 
-extension Dictionary where Key: StringLiteralConvertible, Value: AnyObject {
+public extension Dictionary where Key: StringLiteralConvertible, Value: AnyObject {
     
     //
     // the "get" at keyPath function simply casts a Dictionary as a NSDictionary

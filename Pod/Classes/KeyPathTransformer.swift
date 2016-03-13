@@ -31,6 +31,13 @@ import UIKit
 import Dollar
 
 ////////////////////////////////////////////////////////////////////////////////
+// Declare a bunch of useful typealiases to make the madness smaller
+////////////////////////////////////////////////////////////////////////////////
+
+public typealias traverseCallback = (Dictionary<String, AnyObject>) -> ()
+public typealias applyCallback = (Dictionary<String, AnyObject>) -> (Dictionary<String, AnyObject>)
+
+////////////////////////////////////////////////////////////////////////////////
 // The following operator describes a transform
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -88,7 +95,16 @@ public func => <A, B> (left: A, right: B) -> (A, B) {
 // as parameter (callback parameter) and returns another dictionary
 //
 // The whole operator returns a tuple between the original tuple and the function parameter
-public func => <A>(left: (A, A), right: (Dictionary<String, AnyObject>) -> (Dictionary<String, AnyObject>) ) -> (rule: (A, A), callback: (Dictionary<String, AnyObject>) -> (Dictionary<String, AnyObject>) ) {
+public func => <A>(left: (A, A), right: applyCallback) -> ((A, A), applyCallback) {
+    return (left, right)
+}
+
+//
+// This is a version of the operator that works with a String keyPath and a simple
+// callback function, that takes one dictionary as parameter
+// The left and right parameters are returned as a tuple of (String, Callback)
+// It's to be used with the traverse function
+public func => <A>(left: A, right: traverseCallback) -> (A, traverseCallback) {
     return (left, right)
 }
 
@@ -141,6 +157,15 @@ public func <> (left: KeyPathTransformer, right: (String, String) ) {
 }
 
 //
+// This "Execute Transform" operator actually works with the traverse KeyPathTransformer
+// function;
+// It's this library's shorthand version of a for-loop or a $.each functionpublic func apply
+
+public func <> (left: KeyPathTransformer, right: (String, traverseCallback)){
+    left.traverse(right.0, callback: right.1)
+}
+
+//
 // This is the same thing as above, only this allows you to add as right-hand
 // side parameter a tuple consisiting of another tuple (describing the transform) and
 // a callback function, that takes a dictionary as parameter (accessible from the callback) 
@@ -158,8 +183,8 @@ public func <> (left: KeyPathTransformer, right: (String, String) ) {
 //          return employeeTransform
 //      }
 //
-public func <> (left: KeyPathTransformer, right: (rule: (String, String), callback: (Dictionary<String, AnyObject>) -> (Dictionary<String, AnyObject>) ) ) {
-    left.apply(right.rule, callback: right.callback)
+public func <> (left: KeyPathTransformer, right: ((String, String), applyCallback)) {
+    left.apply(right.0, callback: right.1)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -222,7 +247,7 @@ public class KeyPathTransformer: NSObject {
     // to a new key in the destination dictionary while maintaining the value, 
     // this looks at the "callback" function to transform the destination value
     // as well.
-    public func apply(rule: (String, String), callback: (Dictionary<String, AnyObject>) -> (Dictionary<String, AnyObject>)) {
+    public func apply(rule: (String, String), callback: applyCallback) {
         let source = rule.0
         let destination = rule.1
         var result: [Dictionary<String, AnyObject>] = []
@@ -237,6 +262,22 @@ public class KeyPathTransformer: NSObject {
         }
         
         dictTransformed.set(result, keyPath: destination)
+    }
+    
+    //
+    // This function just traverses a dictionary array and each time it does so
+    // it calles a callback with the array element (dictionary) as parameter
+    // Its intended purpose is to allow splitting of an array of distinct elements
+    // into a dictionary's main body
+    public func traverse(keyPath: String, callback: traverseCallback) {
+        if let array = dictToTransform.get(keyPath) as? Array<AnyObject> {
+            let flattened = $.flatten(array)
+            if let flattened = flattened as? [Dictionary<String, AnyObject>] {
+                $.each(flattened) { (i, _) in
+                    callback(flattened[i])
+                }
+            }
+        }
     }
     
     // 
