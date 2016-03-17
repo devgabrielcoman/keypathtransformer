@@ -34,8 +34,7 @@ import Dollar
 // Declare a bunch of useful typealiases to make the madness smaller
 ////////////////////////////////////////////////////////////////////////////////
 
-public typealias traverseCallback = (Dictionary<String, AnyObject>) -> ()
-public typealias applyCallback = (Dictionary<String, AnyObject>) -> (Dictionary<String, AnyObject>)
+public typealias applyCallback = (Int, Dictionary<String, AnyObject>) -> (Dictionary<String, AnyObject>)
 
 ////////////////////////////////////////////////////////////////////////////////
 // The following operator describes a transform
@@ -104,7 +103,7 @@ public func => <A>(left: (A, A), right: applyCallback) -> ((A, A), applyCallback
 // callback function, that takes one dictionary as parameter
 // The left and right parameters are returned as a tuple of (String, Callback)
 // It's to be used with the traverse function
-public func => <A>(left: A, right: traverseCallback) -> (A, traverseCallback) {
+public func => <A, T>(left: A, right: (T)->()) -> (A, (T)->()) {
     return (left, right)
 }
 
@@ -161,7 +160,7 @@ public func <> (left: KeyPathTransformer, right: (String, String) ) {
 // function;
 // It's this library's shorthand version of a for-loop or a $.each functionpublic func apply
 
-public func <> (left: KeyPathTransformer, right: (String, traverseCallback)){
+public func <> <T>(left: KeyPathTransformer, right: (String, (Int, T)->())){
     left.traverse(right.0, callback: right.1)
 }
 
@@ -216,13 +215,10 @@ public class KeyPathTransformer: NSObject {
     // parameters in a tuple
     // Note that the "set()" function is defined in the aux file Dictionary+KeyPath.
     // Without it setting values at key paths in Swift Dictionaries is a lot harder
-    public func add(set: (AnyObject?, String)) {
+    public func add (set: (AnyObject?, String)) {
         let value = set.0
         let keyPath = set.1
-        
-        if let value = value {
-            dictTransformed.set(value, keyPath: keyPath)
-        }
+        dictTransformed.set(value, keyPath: keyPath)
     }
     
     //
@@ -247,7 +243,7 @@ public class KeyPathTransformer: NSObject {
     // to a new key in the destination dictionary while maintaining the value, 
     // this looks at the "callback" function to transform the destination value
     // as well.
-    public func apply(rule: (String, String), callback: applyCallback) {
+    public func apply (rule: (String, String), callback: applyCallback) {
         let source = rule.0
         let destination = rule.1
         var result: [Dictionary<String, AnyObject>] = []
@@ -256,9 +252,11 @@ public class KeyPathTransformer: NSObject {
             let flattened = $.flatten(array)
             if let flattened = flattened as? [Dictionary<String, AnyObject>] {
                 $.each(flattened) { (i, _) in
-                    result.append(callback(flattened[i]))
+                    result.append(callback(i, flattened[i]))
                 }
             }
+        } else {
+            print("KPTransformer: [Error] \"\(source)\" is not an dictionary array")
         }
         
         dictTransformed.set(result, keyPath: destination)
@@ -269,14 +267,19 @@ public class KeyPathTransformer: NSObject {
     // it calles a callback with the array element (dictionary) as parameter
     // Its intended purpose is to allow splitting of an array of distinct elements
     // into a dictionary's main body
-    public func traverse(keyPath: String, callback: traverseCallback) {
+    public func traverse<T>(keyPath: String, callback: (Int, T)->() ) {
         if let array = dictToTransform.get(keyPath) as? Array<AnyObject> {
             let flattened = $.flatten(array)
-            if let flattened = flattened as? [Dictionary<String, AnyObject>] {
-                $.each(flattened) { (i, _) in
-                    callback(flattened[i])
+            
+            $.each(flattened) { (i, _) in
+                if let item = flattened[i] as? T {
+                    callback(i, item)
+                } else {
+                    print("KPTransformer: [Error] Callback parameter returned by Traverse function not the same as one expected by user for \"\(keyPath)\"")
                 }
             }
+        } else {
+            print("KPTransformer: [Error] \"\(keyPath)\" is not an dictionary array")
         }
     }
     

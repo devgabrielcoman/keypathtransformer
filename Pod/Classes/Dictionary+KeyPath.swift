@@ -17,7 +17,7 @@
 import UIKit
 import Dollar
 
-public extension Dictionary where Key: StringLiteralConvertible, Value: AnyObject {
+public extension Dictionary where Key: StringLiteralConvertible , Value: AnyObject {
     
     //
     // the "get" at keyPath function simply casts a Dictionary as a NSDictionary
@@ -34,10 +34,11 @@ public extension Dictionary where Key: StringLiteralConvertible, Value: AnyObjec
     // required of it by the keyPath parameter, as best it can.
     // It's implied that the keypath is valid, and the checking is fair but minimal
     // no correction is applied
-    mutating func set(val: AnyObject, keyPath: String) {
+    mutating func set (val: AnyObject?, keyPath: String) {
         var keys = keyPath.componentsSeparatedByString(".")
         guard let first = keys.first as? Key else { print("Unable to use string as key on type: \(Key.self)"); return }
         keys.removeAtIndex(0)
+        
         if keys.isEmpty, let settable = val as? Value {
             self[first] = settable
         } else {
