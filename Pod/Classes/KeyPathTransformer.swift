@@ -163,10 +163,3 @@ func set<T>(inout dict: Dictionary<String, T?>, to: String, val: T) {
     }
 }
 
-//func transform<T>(inout dict: Dictionary<String, T>, from: String, to: String) {
-//    print("trying to mutate \(from) to \(to)")
-//    if let value = get(dict, from: from) {
-//        set(&dict, to: to, val: value)
-//        dict[from] = nil
-//    }
-//}
