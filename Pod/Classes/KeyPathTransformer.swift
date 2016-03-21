@@ -97,6 +97,11 @@ public class KeyPathTransformer <T>: NSObject {
     // the destination dictionary
     private var dictTransformed: Dictionary<String, T> = [:]
     
+    // normal init
+    public override init() {
+        // do nothing
+    }
+    
     // custom init
     public init(_ dict: Dictionary<String, T>) {
         super.init()
