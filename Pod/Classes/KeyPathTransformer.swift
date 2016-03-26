@@ -43,6 +43,14 @@ public func => <A, B> (left: A, right: B) -> (A, B) {
     return (left, right)
 }
 
+//public func => <T> (left: T, right: String) -> (T, String) {
+//    return (left, right)
+//}
+
+public func => <T> (left: T, right: String) -> (AnyObject, String) {
+    return (left as! AnyObject, right)
+}
+
 //
 // the => operator in this case returns a tuple from A and a function
 // @usage "payment_history" => { (i, history) in ... }
