@@ -9,108 +9,108 @@
 import UIKit
 import Dollar
 
-infix operator <- { associativity left precedence 170 }
-infix operator +> { associativity right precedence 140 }
-infix operator <> { associativity left precedence 140 }
-infix operator => { associativity right precedence 100 }
-
-public func <- <T> (left: [String:T], right: String) -> T? {
-    return get(left, from: right)
-}
-
-public func +> <T, A> (left: String, right: T) -> (String, A) {
-    return (left, right as! A)
-}
-
-public func <> <T, A> (left: String, right: ()->(T)) -> (String, A) {
-    return (left, right() as! A)
-}
-
-public func <> <T> (left: String, right: (Int, T)->()) -> (String, (Int, T)->()) {
-    return (left, right)
-}
-
-public func => <T> (inout left: [String:T], right: (String, T)) {
-    set(&left, to: right.0, val: right.1)
-}
-
-public func => <T, A> (left: [String:T], right: (String, (Int, A)->())) {
-    let dict = left
-    let keyPath = right.0
-    let callback = right.1
-    
-    if let array = get(dict, from: keyPath) as? [AnyObject] {
-        let flattened = $.flatten(array)
-        $.each(flattened) { (i, _) in
-            callback(i, flattened[i] as! A)
-        }
-    }
-
-}
-
-// module function that does a "keypath" get on a dictionary
-func get<T>(dict: [String:T], from: String) -> T? {
-    var inner: [String:AnyObject] = [:]
-    for key in dict.keys {
-        if let value = dict[key] as? AnyObject {
-            inner[key] = value
-        }
-    }
-    if let value = (inner as NSDictionary).valueForKeyPath(from) {
-        if let value = value as? T {
-            return value
-        }
-    }
-    return nil
-}
-
-// module function that does a "keypath" set on a dictionary
-func set<T>(inout dict: [String:T], to: String, val: T) {
-    var keys = to.componentsSeparatedByString(".") as [String]
-    let first = keys.first as String!
-    if keys.count == 1 {
-        dict[first] = val
-    } else {
-        keys.removeFirst()
-        let rejoined = keys.joinWithSeparator(".")
-        
-        var subdict: [String:T] = [:]
-        
-        if dict[first] != nil, let settable = dict[first] as? [String:T] {
-            subdict = settable
-        }
-        
-        set(&subdict, to: rejoined, val: val)
-        if let settable = subdict as? T {
-            dict[first] = settable
-        }
-    }
-}
-
+//infix operator <- { associativity left precedence 170 }
+//infix operator +> { associativity right precedence 140 }
+//infix operator <> { associativity left precedence 140 }
+//infix operator => { associativity right precedence 100 }
 //
-// module function that does a "keypath" set on a dictionary
-func set<T>(inout dict: [String:T?], to: String, val: T) {
-    var keys = to.componentsSeparatedByString(".") as [String]
-    let first = keys.first as String!
-    
-    if keys.count == 1 {
-        dict[first] = val
-    } else {
-        keys.removeFirst()
-        let rejoined = keys.joinWithSeparator(".")
-        
-        var subdict: [String:T] = [:]
-        
-        if dict[first] != nil, let settable = dict[first] as? [String:T] {
-            subdict = settable
-        }
-        
-        set(&subdict, to: rejoined, val: val)
-        if let settable = subdict as? T {
-            dict[first] = settable
-        }
-    }
-}
+//public func <- <T> (left: [String:T], right: String) -> T? {
+//    return get(left, from: right)
+//}
+//
+//public func +> <T, A> (left: String, right: T) -> (String, A) {
+//    return (left, right as! A)
+//}
+//
+//public func <> <T, A> (left: String, right: ()->(T)) -> (String, A) {
+//    return (left, right() as! A)
+//}
+//
+//public func <> <T> (left: String, right: (Int, T)->()) -> (String, (Int, T)->()) {
+//    return (left, right)
+//}
+//
+//public func => <T> (inout left: [String:T], right: (String, T)) {
+//    set(&left, to: right.0, val: right.1)
+//}
+//
+//public func => <T, A> (left: [String:T], right: (String, (Int, A)->())) {
+//    let dict = left
+//    let keyPath = right.0
+//    let callback = right.1
+//    
+//    if let array = get(dict, from: keyPath) as? [AnyObject] {
+//        let flattened = $.flatten(array)
+//        $.each(flattened) { (i, _) in
+//            callback(i, flattened[i] as! A)
+//        }
+//    }
+//
+//}
+//
+//// module function that does a "keypath" get on a dictionary
+//func get<T>(dict: [String:T], from: String) -> T? {
+//    var inner: [String:AnyObject] = [:]
+//    for key in dict.keys {
+//        if let value = dict[key] as? AnyObject {
+//            inner[key] = value
+//        }
+//    }
+//    if let value = (inner as NSDictionary).valueForKeyPath(from) {
+//        if let value = value as? T {
+//            return value
+//        }
+//    }
+//    return nil
+//}
+//
+//// module function that does a "keypath" set on a dictionary
+//func set<T>(inout dict: [String:T], to: String, val: T) {
+//    var keys = to.componentsSeparatedByString(".") as [String]
+//    let first = keys.first as String!
+//    if keys.count == 1 {
+//        dict[first] = val
+//    } else {
+//        keys.removeFirst()
+//        let rejoined = keys.joinWithSeparator(".")
+//        
+//        var subdict: [String:T] = [:]
+//        
+//        if dict[first] != nil, let settable = dict[first] as? [String:T] {
+//            subdict = settable
+//        }
+//        
+//        set(&subdict, to: rejoined, val: val)
+//        if let settable = subdict as? T {
+//            dict[first] = settable
+//        }
+//    }
+//}
+//
+////
+//// module function that does a "keypath" set on a dictionary
+//func set<T>(inout dict: [String:T?], to: String, val: T) {
+//    var keys = to.componentsSeparatedByString(".") as [String]
+//    let first = keys.first as String!
+//    
+//    if keys.count == 1 {
+//        dict[first] = val
+//    } else {
+//        keys.removeFirst()
+//        let rejoined = keys.joinWithSeparator(".")
+//        
+//        var subdict: [String:T] = [:]
+//        
+//        if dict[first] != nil, let settable = dict[first] as? [String:T] {
+//            subdict = settable
+//        }
+//        
+//        set(&subdict, to: rejoined, val: val)
+//        if let settable = subdict as? T {
+//            dict[first] = settable
+//        }
+//    }
+//}
 
 /**
  
