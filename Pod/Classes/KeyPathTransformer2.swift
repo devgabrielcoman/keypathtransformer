@@ -58,6 +58,12 @@ public final class Transform <T>: NSObject {
         return transform
     }
     
+    public static func create(_ callback:(inout Transform)->()) -> Transform {
+        var transform = Transform<T>()
+        callback(&transform)
+        return transform
+    }
+    
     public subscript (key: String) -> AnyObject? {
         get {
             let result = get(source, from: key)
