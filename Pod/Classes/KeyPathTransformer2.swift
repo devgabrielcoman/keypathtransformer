@@ -21,11 +21,12 @@ public func => <T> (left: AnyObject?, right: (Int, Transform<T>) -> () ) {
                 print("Could not convert callback parameter")
             }
         }
+    } else {
+        print("Left hand operand not an array or is a nil value")
     }
 }
 
 public func => <T> (left: AnyObject?, right: (Int, T)->() ) {
-    print("going normal route")
     if let array = left as? [AnyObject] {
         $.each(array) { (i, _) in
             if let element = array[i] as? T {
@@ -54,12 +55,6 @@ public final class Transform <T>: NSObject {
     
     public static func create(_ source:[String:T], _ callback:(inout Transform)->()) -> Transform {
         var transform = Transform<T>(source)
-        callback(&transform)
-        return transform
-    }
-    
-    public static func create(_ callback:(inout Transform)->()) -> Transform {
-        var transform = Transform<T>()
         callback(&transform)
         return transform
     }
