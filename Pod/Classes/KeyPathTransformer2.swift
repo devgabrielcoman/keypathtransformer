@@ -11,7 +11,21 @@ import Dollar
 
 infix operator => { associativity right precedence 100 }
 
+public func => <T> (left: AnyObject?, right: (Int, Transform<T>) -> () ) {
+    if let array = left as? [AnyObject] {
+        $.each(array) { (i, _) in
+            if let element = array[i] as? [String:T] {
+                let trans = Transform<T>(element)
+                right(i, trans)
+            } else {
+                print("Could not convert callback parameter")
+            }
+        }
+    }
+}
+
 public func => <T> (left: AnyObject?, right: (Int, T)->() ) {
+    print("going normal route")
     if let array = left as? [AnyObject] {
         $.each(array) { (i, _) in
             if let element = array[i] as? T {
