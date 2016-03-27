@@ -43,6 +43,10 @@ public final class Transform <T>: NSObject {
     private var source: [String:T] = [:];
     private var destination: [String:AnyObject] = [:];
     
+    public override init() {
+        super.init()
+    }
+    
     public init(_ source: [String:T]) {
         super.init()
         self.source = source
