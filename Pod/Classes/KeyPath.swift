@@ -17,6 +17,7 @@ import UIKit
 // @return: AnyObject optional
 func get<T>(dict: [String:T], from: String) -> AnyObject? {
     var inner: [String:AnyObject] = [:]
+    
     for key in dict.keys {
         if let value = dict[key] as? AnyObject {
             inner[key] = value
