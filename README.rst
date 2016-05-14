@@ -3,6 +3,8 @@ KeyPathTransformer
 
 .. image:: https://img.shields.io/cocoapods/v/KeyPathTransformer.svg?style=flat
 .. image:: https://img.shields.io/badge/language-swift2-f48041.svg?style=flat
+.. image:: https://img.shields.io/badge/platform-ios-lightgrey.svg
+.. image:: https://img.shields.io/badge/license-GNU-blue.svg
 
 
 A collection of functions and extensions allowing more advance key-path magic in Swift.
