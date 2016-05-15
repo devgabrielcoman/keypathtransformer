@@ -279,6 +279,7 @@ which would be achieved by this transform:
 .. code-block:: swift
 
 	let transform = Transform<AnyObject>(source)
+
 	transform["education"] = {
 
 	  // create an array of dictionaries
@@ -288,14 +289,15 @@ which would be achieved by this transform:
 	  // know to return array elements as transforms, not dictionaries
 	  transform["history"] => { (i, history:Transform<AnyObject>) in
 
-      	history["school_name"] = history["name"]
-      	history["start_date"] = history["dates.start"]
-      	history["end_date"] = history["dates.end"]
+		history["school_name"] = history["name"]
+		history["start_date"] = history["dates.start"]
+		history["end_date"] = history["dates.end"]
 
-      	array.append(history.result())
-      }
+		array.append(history.result())
 
-	  // finally - educatio will be an array of dictionaries
+	  }
+
+	  // finally - "education" will be an array of dictionaries
       return array
     }()
 
