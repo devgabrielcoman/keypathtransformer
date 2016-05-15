@@ -55,23 +55,22 @@ The main **Transform** is defined as a subclass of NSObject over a generic param
 
 	public final class Transform <T>: NSObject
 
-that defines the following constructors
+that defines:
+
+* A constructor without parameters. You can only add values to this transform.
 
 .. code-block:: swift
 
-	//
-	// constructor without parameters - you can only add to this transform
 	public override init()
 
-	//
-	// constructor with a source dictionary
-	//  - you can add values to the transform and
-	// apply transform operations on the existing data
-	//  - you can also specify if you want to add source values into the
-	// transformation result
+* A constructor with a source dictionary. You can add values to the transform and apply operations on the existing data.
+You can also specify if you want to add source values into the transformation result.
+
+.. code-block:: swift
+
 	public init(_ source: [String:T], copySourceIntoDest:Bool = false)
 
-And also defines a result function
+* A result function, that returns the final, transformed dictionary
 
 .. code-block:: swift
 
