@@ -33,8 +33,8 @@ You can include the library into any file by adding the following line at the to
 
 	import KeyPathTransformer
 
-Examples: Assign
-^^^^^^^^^^^^^^^^
+Definitions
+^^^^^^^^^^^
 
 Using **KeyPathTransformer** you can perform more powerful key-path operations on dictionaries.
 The simplest operations involve creating a **Transform** object and assigning or retrieving different values in it.
@@ -77,7 +77,10 @@ And also defines a result function
 
 	public func result() -> [String:AnyObject]
 
-Thus, a simple, complete example
+Examples: Assign
+^^^^^^^^^^^^^^^^
+
+A simple, complete example
 
 .. code-block:: swift
 
