@@ -289,16 +289,15 @@ which would be achieved by this transform:
 	  // know to return array elements as transforms, not dictionaries
 	  transform["history"] => { (i, history:Transform<AnyObject>) in
 
-		history["school_name"] = history["name"]
+	    history["school_name"] = history["name"]
 		history["start_date"] = history["dates.start"]
 		history["end_date"] = history["dates.end"]
 
 		array.append(history.result())
-
 	  }
 
 	  // finally - "education" will be an array of dictionaries
-      return array
-    }()
+	  return array
+	}()
 
-    let result = transform.result()
+	let result = transform.result()
