@@ -83,10 +83,11 @@ A simple, complete example
 .. code-block:: swift
 
 	let transform = Transform<AnyObject>()
+
 	transform["name"] = "John"
 	transform["age"] = 23
+
 	let result = transform.result() as NSDictionary
-	print(result)
 
 will have the following result:
 
@@ -106,8 +107,8 @@ A more complex example
 	transform["name"] = "John Locke"
 	transform["details.age"] = 23
 	transform["details.birth"] = "11 Gwendwr Road"
+
 	let result = transform.result() as NSDictionary
-	print(result)
 
 will have the following result:
 
@@ -130,9 +131,9 @@ To do a basic transform operation, assume you have the following dictionary:
 .. code-block:: swift
 
 	let source = [
-		"name": "John",
-		"address": "11 Gwendwr Road",
-		"age": 23
+	  "name": "John",
+	  "address": "11 Gwendwr Road",
+	  "age": 23
 	]
 
 and you want to transform it into something like this:
@@ -140,14 +141,14 @@ and you want to transform it into something like this:
 .. code-block:: swift
 
 	let expected = [
-		"id": 3105,
-		"details": [
-			"age": 23,
-			"name": "John",
-			"location": [
-				"address": "11 Gwendwr Road"
-			]
+	  "id": 3105,
+	  "details": [
+		"age": 23,
+		"name": "John",
+		"location": [
+		  "address": "11 Gwendwr Road"
 		]
+	  ]
 	] as NSDictionary
 
 Then you'll need to define the following transform:
@@ -155,10 +156,12 @@ Then you'll need to define the following transform:
 .. code-block:: swift
 
 	let transform = Transform<AnyObject>(source)
+
+	transform["id"] = 3105
 	transform["details.name"] = transform["name"]
 	transform["details.location.address"] = transform["address"]
 	transform["details.age"] = transform["age"]
-	transform["id"] = 3105
+
 	let result = transform.result() as NSDictionary
 
 Notice that the transform constructor gets **source** as a parameter, so that you can both add values:
@@ -183,24 +186,34 @@ For example, assume the following dictionary
 .. code-block:: swift
 
 	let source = [
-		"name": "John Appleseed",
-		"working_hours": [
-			"09:00",
-			"17:00"
-		]
+	  "name": "John Appleseed",
+	  "working_hours": [
+		"09:00",
+		"17:00"
+	  ]
 	]
 
-Then you can use the **=>** operator as follows
+then you can use the **=>** operator as follows
 
 .. code-block:: swift
 
 	let transform = Transform<AnyObject>(source)
 	transform["working_hours"] => { (i, hour: String) in
-		if (i == 0) {
-			transform["start_hour"] = hour
-		} else {
-			transform["end_hour"] = hour
-		}
+	  if (i == 0) {
+		transform["start_hour"] = hour
+	  } else {
+		transform["end_hour"] = hour
+	  }
+	}
+
+to obtain the resulting dictionary:
+
+.. code-block:: swift
+
+	{
+	  "name" = "John Appleseed";
+	  "start_hour" = "09:00";
+	  "end_hour" = "17:00";
 	}
 
 Notice that the **=>** operator works on an existing transform / dictionary field, that needs to be an Array of some sort.
@@ -216,7 +229,7 @@ The most simple example is
 .. code-block:: swift
 
 	transform["name"] = {
-		return "John"
+	  return "John"
 	} ()
 
 But a more appropriate example would be when trying to transform the following source dictionary
@@ -224,22 +237,22 @@ But a more appropriate example would be when trying to transform the following s
 .. code-block:: swift
 
 	let source = [
-		"history":[
-			[
-				"name":"St. Martin's College",
-				"dates":[
-					"start":2008,
-					"end":2011
-				]
-			],
-			[
-				"name":"Columbia University",
-				"dates":[
-					"start":2011,
-					"end":2015
-				]
-			]
+	  "history":[
+		[
+		  "name":"St. Martin's College",
+		  "dates":[
+			"start":2008,
+			"end":2011
+		  ]
+		],
+		[
+		  "name":"Columbia University",
+		  "dates":[
+		    "start":2011,
+			"end":2015
+		  ]
 		]
+	  ]
 	]
 
 into the destination
@@ -247,18 +260,18 @@ into the destination
 .. code-block:: swift
 
  	let destination = [
-		"education": [
-			[
-				"school_name": "St. Martin's College",
-				"start_date": 2008,
-				"end_date": 2011
-			],
-			[
-				"school_name": "Columbia University",
-				"start_date": 2011,
-				"end_date": 2015
-			]
+	  "education": [
+		[
+		  "school_name": "St. Martin's College",
+		  "start_date": 2008,
+		  "end_date": 2011
+		],
+		[
+		  "school_name": "Columbia University",
+		  "start_date": 2011,
+		  "end_date": 2015
 		]
+	  ]
 	]
 
 which would be achieved by this transform:
@@ -280,4 +293,3 @@ which would be achieved by this transform:
     }()
 
     let result = transform.result()
-	
