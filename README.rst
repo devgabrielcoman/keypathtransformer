@@ -280,8 +280,13 @@ which would be achieved by this transform:
 
 	let transform = Transform<AnyObject>(source)
 	transform["education"] = {
-      var array: [[String:AnyObject]] = []
-      transform["history"] => { (i, history:Transform<AnyObject>) in
+
+	  // create an array of dictionaries
+	  var array: [[String:AnyObject]] = []
+
+	  // when cycling over an array of dictionaries, KeyPathTransformer will
+	  // know to return array elements as transforms, not dictionaries
+	  transform["history"] => { (i, history:Transform<AnyObject>) in
 
       	history["school_name"] = history["name"]
       	history["start_date"] = history["dates.start"]
@@ -289,6 +294,8 @@ which would be achieved by this transform:
 
       	array.append(history.result())
       }
+
+	  // finally - educatio will be an array of dictionaries
       return array
     }()
 
